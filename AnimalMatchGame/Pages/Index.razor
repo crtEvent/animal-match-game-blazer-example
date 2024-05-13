@@ -17,14 +17,16 @@
         @for (var animalNumber = 0; animalNumber < shuffledAlnimals.Count; animalNumber++)
             {
                 var animal = shuffledAlnimals[animalNumber];
-                var uniqueDescription = $"Button #{animalNumber}";
                 <div class="col-3">
-                    <button @onclick="@(() => ButtonClick(animal, uniqueDescription))"
+                    <button @onclick="@(() => ButtonClick(animal))"
                             type="button" class="btn btn-outline-dark">
                         <h1>@animal</h1>
                     </button>
                 </div>
             }
+    </div>
+    <div class="row">
+        <h2>Matched found: @matchesFound</h2>
     </div>
 </div>
 
@@ -38,6 +40,8 @@
     };
 
     List<string> shuffledAlnimals = new List<string>();
+    int matchesFound = 0;
+
     protected override void OnInitialized()
     {
         SetUpGame();
@@ -49,16 +53,15 @@
         shuffledAlnimals = animalEmojis
             .OrderBy(item => random.Next())
             .ToList();
+        matchesFound = 0;
     }
 
     string lastAnimalFound = string.Empty;
-    string lastDescription = string.Empty;
-    private void ButtonClick(string animal, string animalDescription)
+    private void ButtonClick(string animal)
     {
         if (lastAnimalFound == string.Empty)
         {
             lastAnimalFound = animal;
-            lastDescription = animalDescription;
         }
         else if ((lastAnimalFound == animal))
         {
@@ -66,6 +69,12 @@
             shuffledAlnimals = shuffledAlnimals
                 .Select(a => a.Replace(animal, string.Empty))
                 .ToList();
+            matchesFound++;
+
+            if (matchesFound == 8)
+            {
+                SetUpGame();
+            }
         }
         else
         {
