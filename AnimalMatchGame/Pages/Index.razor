@@ -14,10 +14,13 @@
 
 <div class="container">
     <div class="row">
-        @foreach (var animal in shuffledAlnimals)
+        @for (var animalNumber = 0; animalNumber < shuffledAlnimals.Count; animalNumber++)
             {
+                var animal = shuffledAlnimals[animalNumber];
+                var uniqueDescription = $"Button #{animalNumber}";
                 <div class="col-3">
-                    <button type="button" class="btn btn-outline-dark">
+                    <button @onclick="@(() => ButtonClick(animal, uniqueDescription))"
+                            type="button" class="btn btn-outline-dark">
                         <h1>@animal</h1>
                     </button>
                 </div>
@@ -35,10 +38,10 @@
     };
 
     List<string> shuffledAlnimals = new List<string>();
-        protected override void OnInitialized()
-        {
-            SetUpGame();
-        }
+    protected override void OnInitialized()
+    {
+        SetUpGame();
+    }
 
     private void SetUpGame()
     {
@@ -46,5 +49,27 @@
         shuffledAlnimals = animalEmojis
             .OrderBy(item => random.Next())
             .ToList();
+    }
+
+    string lastAnimalFound = string.Empty;
+    string lastDescription = string.Empty;
+    private void ButtonClick(string animal, string animalDescription)
+    {
+        if (lastAnimalFound == string.Empty)
+        {
+            lastAnimalFound = animal;
+            lastDescription = animalDescription;
+        }
+        else if ((lastAnimalFound == animal))
+        {
+            lastAnimalFound = string.Empty;
+            shuffledAlnimals = shuffledAlnimals
+                .Select(a => a.Replace(animal, string.Empty))
+                .ToList();
+        }
+        else
+        {
+            lastAnimalFound = string.Empty;
+        }
     }
 }
